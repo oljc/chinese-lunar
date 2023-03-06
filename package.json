@@ -1,0 +1,67 @@
+{
+  "name": "chinese-lunar",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./lib/index.min.js",
+  "module": "./lib/index.esm.js",
+  "types": "./types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs",
+    "lint": "eslint src",
+    "lint-staged": "npx lint-staged",
+    "test": "jest",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs"
+  },
+  "keywords": [
+    "ChineseLunarCalendar",
+    "ChineseLunar",
+    "lunarjs",
+    "ts"
+  ],
+  "author": "LIjiAngChen8",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^17.4.4",
+    "@commitlint/config-conventional": "^17.4.4",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-strip": "^3.0.2",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/jest": "^29.4.0",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
+    "eslint": "^8.33.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^3.5.3",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "jest": "^29.4.3",
+    "lint-staged": "^13.1.2",
+    "prettier": "^2.8.3",
+    "rollup": "^3.12.0",
+    "rollup-plugin-filesize": "^9.1.2",
+    "ts-jest": "^29.0.5",
+    "typescript": "^4.9.5",
+    "vitepress": "^1.0.0-alpha.49",
+    "vue": "^3.2.47"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
+}
