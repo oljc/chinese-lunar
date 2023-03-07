@@ -17,6 +17,7 @@
 ![Rollup Version](https://img.shields.io/badge/Rollup-v3.12.0-orange)
 ![ESLint](https://img.shields.io/badge/ESLint-v8.33.0-orange)
 ![Jest](https://img.shields.io/badge/Jest-v29.4.3-orange)
+![GitHub stars](https://img.shields.io/github/stars/LIjiAngChen8/chinese-lunar?style=social)
 
 
 </div>
