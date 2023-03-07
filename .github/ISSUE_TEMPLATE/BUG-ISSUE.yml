@@ -1,0 +1,39 @@
+name: 🐞 Bug
+description: 该表单用于提交bug/issue
+title: "[Bug]: "
+labels: ["🐞Bug"]
+body:
+  - type: markdown
+    id: tips
+    attributes:
+      value: |
+        感谢您花时间填写此错误报告!
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 是否有相同issue?
+      description: 避免提交重复问题,请确定您的这个bug没有相同的issue了.
+      options:
+      - label: 我确定
+        required: true
+  - type: dropdown
+    id: bugtype
+    attributes: 
+      label: bug类型
+      multiple: true
+      options:
+        - docs(文档)
+        - code(源代码)
+        - website(官网问题)
+        - workflow(工作流)
+        - issue(使用问题)
+        - other(其他)
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 问题描述
+      description: 请详细描述该问题的具体表现。
+      placeholder: 描述
+      value: "描述"
+    validations:
+      required: true
