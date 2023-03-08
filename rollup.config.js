@@ -10,7 +10,7 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: 'lib/index.min.js',
+      file: 'dist/index.min.js',
       format: 'umd',
       name: name,
       exports: 'named',
@@ -18,15 +18,18 @@ export default {
       compact: true,
     },
     {
-      file: 'lib/index.esm.js',
+      file: 'dist/index.esm.js',
       format: 'es',
       exports: 'named',
       plugins: [terser()],
       compact: true,
     },
     {
-      file: 'types/index.d.ts',
-      format: 'es',
+      file: 'dist/index.cjs.js',
+      format: 'cjs',
+      exports: 'named',
+      plugins: [terser()],
+      compact: true,
     },
   ],
   plugins: [
@@ -35,6 +38,7 @@ export default {
     typescript({
       compilerOptions: {
         declaration: true,
+        declarationDir: 'types',
         emitDeclarationOnly: true,
       },
     }),
