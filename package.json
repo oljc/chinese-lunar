@@ -2,11 +2,12 @@
   "name": "chinese-lunar",
   "version": "0.1.0",
   "description": "",
-  "main": "./lib/index.min.js",
-  "module": "./lib/index.esm.js",
-  "types": "./types/index.d.ts",
+  "main": "dist/index.min.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.min.js",
+  "types": "dist/types/index.d.ts",
   "files": [
-    "dist"
+    "dist/**/*"
   ],
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
@@ -18,7 +19,8 @@
     "docs:serve": "vitepress serve docs"
   },
   "keywords": [
-    "ChineseLunarCalendar",
+    "CLunar",
+    "Calendar",
     "ChineseLunar",
     "lunarjs",
     "ts"
