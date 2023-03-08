@@ -38,7 +38,7 @@
 
 
 # 贡献
-贡献之前请先阅读 [行为准则](./CODE_OF_CONDUCT.md)。
+贡献之前请先阅读 [行为准则](./CODE_OF_CONDUCT_CN.md)、[贡献指南](./CONTRIBUTING.md)。
 
 <a href="https://github.com/LIjiAngChen8/chinese-lunar/graphs/contributors"><img src="https://contrib.rocks/image?repo=LIjiAngChen8/chinese-lunar" />
 </a>
