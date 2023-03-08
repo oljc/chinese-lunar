@@ -6,10 +6,13 @@
   "module": "dist/index.esm.js",
   "browser": "dist/index.min.js",
   "types": "dist/types/index.d.ts",
+  "type": "module",
   "files": [
     "dist/**/*"
   ],
   "scripts": {
+    "dev": "rollup -cw",
+    "clean": "rimraf ./dist",
     "build": "rollup -c --bundleConfigAsCjs",
     "lint": "eslint src",
     "lint-staged": "npx lint-staged",
@@ -65,5 +68,9 @@
       "pre-commit": "lint-staged",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "dependencies": {
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-serve": "^2.0.2"
   }
 }
