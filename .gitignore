@@ -1,5 +1,6 @@
 node_modules
 
+dist
 lib
 /types/*.d.ts
 /docs/.vitepress/cache/
