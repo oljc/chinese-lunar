@@ -3,8 +3,6 @@ import strip from '@rollup/plugin-strip';
 import terser from '@rollup/plugin-terser';
 import filesize from 'rollup-plugin-filesize';
 import typescript from '@rollup/plugin-typescript';
-import serve from 'rollup-plugin-serve';
-import livereload from 'rollup-plugin-livereload';
 
 const name = 'chineselunar';
 
@@ -14,7 +12,7 @@ export default {
     {
       file: 'dist/index.min.js',
       format: 'umd',
-      name: name,
+      name,
       exports: 'named',
       plugins: [terser()],
       compact: true,
@@ -35,14 +33,6 @@ export default {
     },
   ],
   plugins: [
-    serve({
-      open: true,
-      contentBase: './example',
-      historyApiFallback: true,
-      host: 'localhost',
-      part: 3000,
-    }),
-    livereload(),
     commonjs(),
     strip(),
     typescript({
