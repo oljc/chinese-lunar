@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "rollup -wc config/rollup.config.dev.js  --bundleConfigAsCjs",
     "clean": "rimraf ./dist",
-    "build": "yarn clean && rollup -c config/rollup.config.prod.js",
+    "build": "yarn clean && rollup -c config/rollup.config.prod.js --bundleConfigAsCjs",
     "lint": "eslint src",
     "lint-staged": "npx lint-staged",
     "test": "jest",
