@@ -12,7 +12,7 @@ export default {
     {
       file: 'dist/index.min.js',
       format: 'umd',
-      name: name,
+      name,
       exports: 'named',
       plugins: [terser()],
       compact: true,

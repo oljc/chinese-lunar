@@ -10,6 +10,8 @@
     "dist/**/*"
   ],
   "scripts": {
+    "dev": "rollup -wc config/rollup.config.dev.js  --bundleConfigAsCjs",
+    "clean": "rimraf ./dist",
     "build": "rollup -c --bundleConfigAsCjs",
     "lint": "eslint src",
     "lint-staged": "npx lint-staged",
@@ -34,6 +36,8 @@
     "@rollup/plugin-strip": "^3.0.2",
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "^11.0.0",
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-serve": "^2.0.2",
     "@types/jest": "^29.4.0",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
