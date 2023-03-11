@@ -22,7 +22,7 @@ const lunar = function (date?: DateType, c?: ConfigType): Lunar {
 
 const parseDate = (date: DateType, utc?: boolean): Date => {
   if (date === null) return new Date(NaN);
-  if (U.u(date)) return new Date();
+  if (U.isUndefined(date)) return new Date();
   if (date instanceof Date) return new Date(date);
   if (typeof date === 'string' && !/Z$/i.test(date)) {
     const e = date.match(REGEX_P);

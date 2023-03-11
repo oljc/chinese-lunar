@@ -10,21 +10,38 @@ const isUndefined = (s: any): s is undefined => s === undefined;
 const twoHourIndex = (h: number) => Math.floor((h + 1) / 2) % 12;
 
 const minYear = 1900; // 最小年限
-const maxYear = 2100; // 最大年限
+
+/**
+ * 缓存管理
+ * @param {Function} fn 需要被缓存的函数
+ * @returns {Function} 缓存了函数返回值的函数
+ */
+function memoize<T extends (...args: any[]) => any>(func: T): T {
+  const cache = new Map();
+  return ((...args: any[]) => {
+    const cacheKey = JSON.stringify(args);
+    if (cache.has(cacheKey)) {
+      return cache.get(cacheKey);
+    }
+    const result = func(...args);
+    cache.set(cacheKey, result);
+    return result;
+  }) as T;
+}
 
 /**
  * 获取农历Y年的总天数
  * @param 公历年份
  * @returns 农历Y年的总天数
  */
-const getLunarYearDays = (y: number): number => {
+const getLunarYearDays = memoize((y: number): number => {
   const d = C.DATD[y - minYear];
   let sum = 348;
   for (let i = 0x8000; i > 0x8; i >>= 1) {
     sum += d & i ? 1 : 0;
   }
   return sum + getLeapMonthDays(y);
-};
+});
 
 /**
  * 获取指定年份的农历闰月天数
@@ -41,7 +58,7 @@ const getLeapMonthDays = (y: number) => {
 /**
  * 获取指定年份的农历闰月月份
  * @param y 公历年份
- * @returns 润几月
+ * @returns 润几月 0无闰月
  */
 const getLunarLeapMonth = (y: number) => {
   return C.DATD[y - minYear] & 0xf;
@@ -101,18 +118,33 @@ const getChineseYear = (y: number): string => {
     .join('');
 };
 
-const getCNMonth = (m: number) => {
+/**
+ * 转换中文月份
+ * @param m 月份
+ * @returns 大写中文月
+ */
+const getChineseMonth = (m: number) => {
   if (m > 12 || m < 1) {
     return -1;
   }
-  if (m === 1) return '\u6b63\u6708';
-  return `${C.CN_DAY[m]}\u6708`;
+  if (m === 1) return '\u6b63\u6708'; // 正月
+  return `${C.CN_DAY[m]}\u6708`; // X月
 };
 
+/**
+ * 获取中文干支
+ * @param offset 偏移量
+ * @returns 干支：癸卯
+ */
 const getGanZhi = (offset: number) => {
   return C.GAN[offset % 10] + C.ZHI[offset % 12];
 };
 
+/**
+ * 获取对应干支年
+ * @param year 年份
+ * @returns 干支年
+ */
 const getGanZhiYear = (year: number) => {
   let g = (year - 3) % 10;
   let z = (year - 3) % 12;
@@ -162,6 +194,17 @@ const findFirstTerm = (year: number, month: number): number => {
 };
 
 /**
+ * 获取星座名
+ * @param {number} month 出生月份
+ * @param {number} day 出生日期
+ * @returns {string} 星座名称
+ */
+const toAstro = (month: number, day: number): string => {
+  const startIndex = month * 2 - (day < C.ASTRO_D[month - 1] ? 2 : 0);
+  return `${C.ASTRO.slice(startIndex, startIndex + 2)}\u5ea7`;
+};
+
+/**
  * 公历转农历
  * @param date 日期
  * @returns obj 农历信息对象
@@ -172,10 +215,11 @@ const solar2lunar = (date: Date) => {
   const d = date.getDate();
   let i = minYear;
   let temp = 0;
-  let offset = (Date.UTC(y, m - 1, d) - Date.UTC(1900, 0, 31)) / 86400000;
+  let offset = (Date.UTC(y, m - 1, d) - Date.UTC(1900, 0, 31)) / 86400000; // 偏移天数
+
   for (i; i < 2101 && offset > 0; i++) {
     temp = getLunarYearDays(i);
-    offset -= temp;
+    offset -= temp; // 偏移减去当前天数
   }
   if (offset < 0) {
     offset += temp;
@@ -183,67 +227,77 @@ const solar2lunar = (date: Date) => {
   }
   const year = i; // 确定年
 
-  const leap = getLunarLeapMonth(i) || 0; // 润几月
+  const leap = getLunarLeapMonth(i); // 润几月
   let isLeap = false;
-  let j = 1;
-  // 如果还剩偏移天数开始循环
-  for (j; j < 13 && offset > 0; j++) {
-    if (leap > 0 && j === leap + 1 && isLeap === false) {
-      --j;
+  let month = 1;
+  for (month; month <= 12 && offset > 0; month++) {
+    if (leap > 0 && month === leap + 1 && isLeap === false) {
+      --month;
       isLeap = true;
       temp = getLeapMonthDays(year);
     } else {
-      temp = getLunarMonthDays(year, j);
+      temp = getLunarMonthDays(year, month);
     }
-    if (isLeap === true && j === leap + 1) {
+    if (isLeap === true && month === leap + 1) {
       isLeap = false;
     }
     offset -= temp;
   }
-  if (offset === 0 && leap > 0 && j === leap + 1) {
+  if (offset === 0 && leap > 0 && month === leap + 1) {
     if (isLeap) {
       isLeap = false;
     } else {
       isLeap = true;
-      --j;
+      --month;
     }
   }
   if (offset < 0) {
     offset += temp;
-    --j;
-  }
-  const month = j;
-  const day = offset + 1;
-  const firstNode = findFirstTerm(y, m); // 返回当月「节」为几日开始
-  let gzM = getGanZhi((y - 1900) * 12 + m + 11);
-  if (d >= firstNode) {
-    gzM = getGanZhi((y - 1900) * 12 + m + 12);
+    --month;
   }
 
-  // 日柱当月一日与 1900/1/1 相差天数
-  const gzD = getGanZhi(
-    Date.UTC(y, m - 1, 1, 0, 0, 0, 0) / 86400000 + 25577 + d - 1
+  const day = offset + 1;
+  const gzM = getGanZhi(
+    (y - minYear) * 12 + m + 11 + (d >= findFirstTerm(y, m) ? 1 : 0)
   );
+  const gzD = getGanZhi(
+    Date.UTC(y, m - 1, 1, 0, 0, 0, 0) / 86400000 + 25576 + d
+  );
+  const cD = getChineseDay(day);
+  const cM = (isLeap ? '\u95f0' : '') + getChineseMonth(month);
+  const cY = getChineseYear(year);
+  const gzY = getGanZhiYear(year);
+  const zodiac = getZodiac(year);
+  const cW = `星期${C.CN_DAY[date.getDay()]}`;
+  const term = sTermInfo(y, m - 1, d);
+
   return {
     y: year,
     M: month,
     D: day,
-    cD: getChineseDay(day),
-    cM: (isLeap ? '\u95f0' : '') + getCNMonth(month),
-    cY: getChineseYear(year),
-    gzY: getGanZhiYear(year),
+    cD,
+    cM,
+    cY,
+    gzY,
     gzM,
     gzD,
     isLeap,
-    zodiac: getZodiac(year),
-    cW: `星期${C.CN_DAY[date.getDay()]}`,
-    term: sTermInfo(y, m - 1, d),
+    zodiac,
+    cW,
+    term,
   };
 };
 
 export default {
-  u: isUndefined,
-  solar2lunar,
+  isUndefined,
   twoHourIndex,
+  solar2lunar,
   sTermInfo,
+  getChineseMonth,
+  getChineseDay,
+  getLunarYearDays,
+  getLeapMonthDays,
+  getZodiac,
+  getLunarMonthDays,
+  toAstro,
 };
