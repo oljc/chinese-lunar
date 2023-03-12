@@ -9,6 +9,25 @@ const isUndefined = (s: any): s is undefined => s === undefined;
 
 const twoHourIndex = (h: number) => Math.floor((h + 1) / 2) % 12;
 
+const prettyUnit = (u: string): string => {
+  const special: { [key: string]: string } = {
+    ly: C.LY,
+    lm: C.LM,
+    ld: C.LD,
+    lt: C.LT,
+    cy: C.CY,
+    cm: C.CM,
+    cd: C.CD,
+    cw: C.CW,
+    gzy: C.GZY,
+    gzm: C.GZM,
+    gzd: C.GZD,
+    zod: C.ZOD,
+    isl: C.ISL,
+  };
+  return special[u] || String(u || '');
+};
+
 const minYear = 1900; // 最小年限
 
 /**
@@ -199,7 +218,7 @@ const findFirstTerm = (year: number, month: number): number => {
  * @param {number} day 出生日期
  * @returns {string} 星座名称
  */
-const toAstro = (month: number, day: number): string => {
+const getConstellation = (month: number, day: number): string => {
   const startIndex = month * 2 - (day < C.ASTRO_D[month - 1] ? 2 : 0);
   return `${C.ASTRO.slice(startIndex, startIndex + 2)}\u5ea7`;
 };
@@ -225,72 +244,73 @@ const solar2lunar = (date: Date) => {
     offset += temp;
     i--;
   }
-  const year = i; // 确定年
+  const lunarYear = i; // 确定年
 
-  const leap = getLunarLeapMonth(i); // 润几月
+  const leap = getLunarLeapMonth(y); // 润几月
   let isLeap = false;
-  let month = 1;
-  for (month; month <= 12 && offset > 0; month++) {
-    if (leap > 0 && month === leap + 1 && isLeap === false) {
-      --month;
+  let lunarMonth = 1;
+  for (lunarMonth; lunarMonth <= 12 && offset > 0; lunarMonth++) {
+    if (leap > 0 && lunarMonth === leap + 1 && isLeap === false) {
+      --lunarMonth;
       isLeap = true;
-      temp = getLeapMonthDays(year);
+      temp = getLeapMonthDays(y);
     } else {
-      temp = getLunarMonthDays(year, month);
+      temp = getLunarMonthDays(y, lunarMonth);
     }
-    if (isLeap === true && month === leap + 1) {
+    if (isLeap === true && lunarMonth === leap + 1) {
       isLeap = false;
     }
     offset -= temp;
   }
-  if (offset === 0 && leap > 0 && month === leap + 1) {
+  if (offset === 0 && leap > 0 && lunarMonth === leap + 1) {
     if (isLeap) {
       isLeap = false;
     } else {
       isLeap = true;
-      --month;
+      --lunarMonth;
     }
   }
   if (offset < 0) {
     offset += temp;
-    --month;
+    --lunarMonth;
   }
 
-  const day = offset + 1;
-  const gzM = getGanZhi(
+  const lunarDay = offset + 1;
+  const gzm = getGanZhi(
     (y - minYear) * 12 + m + 11 + (d >= findFirstTerm(y, m) ? 1 : 0)
   );
-  const gzD = getGanZhi(
+  const gzd = getGanZhi(
     Date.UTC(y, m - 1, 1, 0, 0, 0, 0) / 86400000 + 25576 + d
   );
-  const cD = getChineseDay(day);
-  const cM = (isLeap ? '\u95f0' : '') + getChineseMonth(month);
-  const cY = getChineseYear(year);
-  const gzY = getGanZhiYear(year);
-  const zodiac = getZodiac(year);
-  const cW = `星期${C.CN_DAY[date.getDay()]}`;
-  const term = sTermInfo(y, m - 1, d);
+  const cd = getChineseDay(lunarDay);
+  const cm = `${isLeap ? '\u95f0' : ''}${getChineseMonth(lunarMonth)}`;
+  const cy = getChineseYear(lunarYear);
+  const gzy = getGanZhiYear(lunarYear);
+  const zod = getZodiac(lunarYear);
+  const cw = `星期${C.CN_DAY[date.getDay()]}`;
+  const st = sTermInfo(y, m - 1, d);
 
   return {
-    y: year,
-    M: month,
-    D: day,
-    cD,
-    cM,
-    cY,
-    gzY,
-    gzM,
-    gzD,
-    isLeap,
-    zodiac,
-    cW,
-    term,
+    ly: lunarYear,
+    lm: lunarMonth,
+    ld: lunarDay,
+    isl: isLeap,
+    cd,
+    cm,
+    cy,
+    gzy,
+    gzm,
+    gzd,
+    zod,
+    cw,
+    st,
   };
 };
 
 export default {
-  isUndefined,
-  twoHourIndex,
+  u: isUndefined,
+  t: twoHourIndex,
+  p: prettyUnit,
   solar2lunar,
   sTermInfo,
   getChineseMonth,
@@ -299,5 +319,5 @@ export default {
   getLeapMonthDays,
   getZodiac,
   getLunarMonthDays,
-  toAstro,
+  getConstellation,
 };

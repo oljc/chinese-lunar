@@ -293,3 +293,17 @@ export const DATD = [
 
 export const ASTRO = '摩羯水瓶双鱼白羊金牛双子巨蟹狮子处女天秤天蝎射手摩羯';
 export const ASTRO_D = [20, 19, 21, 21, 21, 22, 23, 23, 23, 23, 22, 22];
+
+export const LY = 'lunarYear';
+export const LM = 'lunarMonth';
+export const LD = 'lunarDay';
+export const LT = 'lunarTime';
+export const CY = 'chineseYear';
+export const CM = 'chineseMonth';
+export const CD = 'chineseDay';
+export const CW = 'chineseWeek';
+export const GZY = 'ganZhiYear';
+export const GZM = 'ganZhiMonth';
+export const GZD = 'ganZhiDay';
+export const ZOD = 'zodiac';
+export const ISL = 'isLeap';

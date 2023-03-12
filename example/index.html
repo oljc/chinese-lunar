@@ -9,7 +9,15 @@
   <body>
     <script type="module">
         import lunar from '../dist/index.esm.js';
-        console.log(lunar());
+        const lunarDate = lunar();
+        console.log(lunarDate);
+        console.log(lunarDate.get('lt'));
+        console.log(lunarDate.lunarYear());
+        console.log(lunarDate.lunarMonth());
+        console.log(lunarDate.lunarDay());
+        console.log(lunarDate.chineseYear());
+        console.log(lunarDate.chineseMonth());
+        console.log(lunarDate.chineseDay());
     </script>
   </body>
 </html>

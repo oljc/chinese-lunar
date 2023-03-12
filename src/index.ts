@@ -11,8 +11,12 @@ interface ConfigType {
   format?: string;
 }
 
+const isLunar = (d: unknown): d is Lunar => d instanceof Lunar;
 // eslint-disable-next-line func-names
 const lunar = function (date?: DateType, c?: ConfigType): Lunar {
+  if (isLunar(date)) {
+    return date.clone();
+  }
   const cfg: ConfigType = typeof c === 'object' ? c : {};
   cfg.date = date;
   // eslint-disable-next-line prefer-rest-params
@@ -22,7 +26,7 @@ const lunar = function (date?: DateType, c?: ConfigType): Lunar {
 
 const parseDate = (date: DateType, utc?: boolean): Date => {
   if (date === null) return new Date(NaN);
-  if (U.isUndefined(date)) return new Date();
+  if (U.u(date)) return new Date();
   if (date instanceof Date) return new Date(date);
   if (typeof date === 'string' && !/Z$/i.test(date)) {
     const e = date.match(REGEX_P);
@@ -43,36 +47,10 @@ const parseDate = (date: DateType, utc?: boolean): Date => {
   return new Date(date);
 };
 
+const wrapper = (date: DateType) => lunar(date);
+
 class Lunar {
-  private $d: any;
-
-  private $y: any;
-
-  private $M: any;
-
-  private $D: any;
-
-  private $zodiac: any;
-
-  private $cDay: any;
-
-  private $cMonth: any;
-
-  private $cYear: any;
-
-  private $gzY: any;
-
-  private $gzM: any;
-
-  private $gzD: any;
-
-  private $isLeap: any;
-
-  private $w: any;
-
-  private $cW: any;
-
-  private $term: any;
+  [key: string]: any;
 
   constructor(cfg: ConfigType) {
     this.parse(cfg);
@@ -80,52 +58,47 @@ class Lunar {
 
   parse(cfg: ConfigType) {
     this.$d = parseDate(cfg.date);
-    this.$w = this.$d.getDay();
     this.init();
   }
 
   init() {
-    const { y, M, D, cY, cM, cD, cW, gzY, gzM, gzD, zodiac, isLeap, term } =
+    const { ly, lm, ld, cy, cm, cd, cw, gzy, gzm, gzd, zod, isl, st } =
       U.solar2lunar(this.$d);
-    this.$y = y;
-    this.$M = M;
-    this.$D = D;
-    this.$cYear = cY;
-    this.$cMonth = cM;
-    this.$cDay = cD;
-    this.$cW = cW;
-    this.$gzY = gzY;
-    this.$gzM = gzM;
-    this.$gzD = gzD;
-    this.$zodiac = zodiac;
-    this.$isLeap = isLeap;
-    this.$term = term;
-  }
-
-  year(): number {
-    return this.$y;
-  }
-
-  month(): string {
-    return this.$M;
-  }
-
-  day(): string {
-    return this.$D;
+    this.$ly = ly;
+    this.$lm = lm;
+    this.$ld = ld;
+    this.$cy = cy;
+    this.$cm = cm;
+    this.$cd = cd;
+    this.$cw = cw;
+    this.$gzy = gzy;
+    this.$gzm = gzm;
+    this.$gzd = gzd;
+    this.$zod = zod;
+    this.$isl = isl;
+    this.$st = st;
   }
 
   format(): string {
-    return this.$y + this.$cMonth + this.$cDay;
+    return this.$ly + this.$cm + this.$cd;
   }
 
-  time(h?: number, u?: string): string {
+  clone() {
+    return wrapper(this.$d);
+  }
+
+  get(unit: string) {
+    return this[U.p(unit)]();
+  }
+
+  lunarTime(h?: number, u?: string): string {
     const i = h || this.$d.getHours();
-    return C.ZHI[U.twoHourIndex(i)] + (u || '时');
+    return C.ZHI[U.t(i)] + (u || '时');
   }
 
   timeShengXiao(h?: number): string {
     const i = h || this.$d.getHours();
-    return C.ZODIAC[U.twoHourIndex(i)];
+    return C.ZODIAC[U.t(i)];
   }
 
   sTerm(date?: DateType): string {
@@ -133,4 +106,35 @@ class Lunar {
     return U.sTermInfo(d.getFullYear(), d.getMonth(), d.getDate());
   }
 }
+
+const proto = Lunar.prototype;
+lunar.prototype = proto;
+[
+  ['$ly', C.LY],
+  ['$lm', C.LM],
+  ['$ld', C.LD],
+  ['$cy', C.CY],
+  ['$cm', C.CM],
+  ['$cd', C.CD],
+  ['$cw', C.CW],
+  ['$gzy', C.GZY],
+  ['$gzm', C.GZM],
+  ['$gzd', C.GZD],
+  ['$zod', C.ZOD],
+  ['$isl', C.ISL],
+].forEach(([prop, name]) => {
+  // eslint-disable-next-line func-names
+  proto[name] = function () {
+    return this[prop];
+  };
+});
+
+lunar.extend = (plugin: any, option: any) => {
+  if (!plugin.$i) {
+    plugin(option, Lunar, lunar);
+    plugin.$i = true;
+  }
+  return lunar;
+};
+
 export default lunar;

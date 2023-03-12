@@ -16,6 +16,7 @@
     "lint": "eslint src",
     "lint-staged": "npx lint-staged",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs"
