@@ -313,6 +313,7 @@ export default {
   p: prettyUnit,
   solar2lunar,
   sTermInfo,
+  getChineseYear,
   getChineseMonth,
   getChineseDay,
   getLunarYearDays,
