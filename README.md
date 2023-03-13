@@ -12,6 +12,7 @@
 <div align="center">
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.9.5-%23165DFF)
+[![codecov](https://codecov.io/gh/LIjiAngChen8/chinese-lunar/branch/main/graph/badge.svg?token=KMWCEVQ57I)](https://codecov.io/gh/LIjiAngChen8/chinese-lunar)
 [![GitHub last commit](https://img.shields.io/github/last-commit/LIjiAngChen8/chinese-lunar.svg)](https://github.com/LIjiAngChen8/chinese-lunar/commit/master)
 [![GitHub license](https://img.shields.io/github/license/LIjiAngChen8/chinese-lunar.svg)](https://github.com/LIjiAngChen8/chinese-lunar/blob/master/LICENSE)
 ![Rollup Version](https://img.shields.io/badge/Rollup-v3.12.0-orange)
